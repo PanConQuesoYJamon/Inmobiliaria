@@ -5,9 +5,9 @@ if(!function_exists('loadEnvFile')){
             return;
         }
 
-        $lines = files($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         if($lines === false){
-            retunr;
+            return;
         }
 
         foreach($lines as $line){
@@ -17,7 +17,7 @@ if(!function_exists('loadEnvFile')){
                 continue;
             }
 
-            [&name, $value] = array_pad(explode('=', $line, 2), 2, '');
+            [$name, $value] = array_pad(explode('=', $line, 2), 2, '');
             $name = trim($name);
             if($name === ''){
                 continue;
@@ -36,7 +36,5 @@ if(!defined('APP_ENV_LOADED')){
     loadEnvFile(__DIR__ . '/../.env');
     define('APP_ENV_LOADED', true); #entorno cargado de aplicacion
 }
-
-
 
 ?>

@@ -1,0 +1,211 @@
+-- ============================================================
+--  BASE DE DATOS: INMOBILIARIA - RENTA DE APARTAMENTOS
+--  Versión: 1.2 (agregada auditoría y bitácora)
+-- ============================================================
+
+CREATE DATABASE IF NOT EXISTS inmobiliaria
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE inmobiliaria;
+
+-- ------------------------------------------------------------
+-- TABLA: usuarios
+-- ------------------------------------------------------------
+CREATE TABLE usuarios (
+  id       INT          AUTO_INCREMENT PRIMARY KEY,
+  codigo   VARCHAR(100) DEFAULT NULL,
+  nombre   VARCHAR(100) DEFAULT NULL,
+  username VARCHAR(100) NOT NULL,
+  clave    VARCHAR(100) NOT NULL,
+  estado   VARCHAR(1)   NOT NULL
+);
+
+-- ------------------------------------------------------------
+-- TABLA: zonas
+-- ------------------------------------------------------------
+CREATE TABLE zonas (
+  id           INT          AUTO_INCREMENT PRIMARY KEY,
+  nombre       VARCHAR(100) NOT NULL,
+  municipio    VARCHAR(100) DEFAULT NULL,
+  departamento VARCHAR(100) DEFAULT NULL,
+  estado       VARCHAR(1)   NOT NULL DEFAULT 'A'
+);
+
+-- ------------------------------------------------------------
+-- TABLA: tipos_inmueble
+-- ------------------------------------------------------------
+CREATE TABLE tipos_inmueble (
+  id          INT          AUTO_INCREMENT PRIMARY KEY,
+  nombre      VARCHAR(100) NOT NULL,
+  descripcion VARCHAR(255) DEFAULT NULL,
+  estado      VARCHAR(1)   NOT NULL DEFAULT 'A'
+);
+
+-- ------------------------------------------------------------
+-- TABLA: propietarios
+-- (incluye auditoría: creado_por, creado_en, modificado_por,
+--  modificado_en)
+-- ------------------------------------------------------------
+CREATE TABLE propietarios (
+  id             INT          AUTO_INCREMENT PRIMARY KEY,
+  codigo         VARCHAR(100) DEFAULT NULL,
+  nombres        VARCHAR(150) NOT NULL,
+  apellidos      VARCHAR(150) NOT NULL,
+  dpi            VARCHAR(20)  DEFAULT NULL,
+  nit            VARCHAR(20)  DEFAULT NULL,
+  telefono       VARCHAR(20)  DEFAULT NULL,
+  email          VARCHAR(150) DEFAULT NULL,
+  direccion      VARCHAR(255) DEFAULT NULL,
+  estado         VARCHAR(1)   NOT NULL DEFAULT 'A',
+  creado_por     INT          DEFAULT NULL,
+  creado_en      DATETIME     DEFAULT NOW(),
+  modificado_por INT          DEFAULT NULL,
+  modificado_en  DATETIME     DEFAULT NULL,
+  CONSTRAINT fk_prop_creado_por     FOREIGN KEY (creado_por)     REFERENCES usuarios (id),
+  CONSTRAINT fk_prop_modificado_por FOREIGN KEY (modificado_por) REFERENCES usuarios (id)
+);
+
+-- ------------------------------------------------------------
+-- TABLA: inmuebles
+-- (incluye auditoría)
+-- ------------------------------------------------------------
+CREATE TABLE inmuebles (
+  id               INT           AUTO_INCREMENT PRIMARY KEY,
+  codigo           VARCHAR(100)  DEFAULT NULL,
+  propietario_id   INT           NOT NULL,
+  tipo_inmueble_id INT           NOT NULL,
+  zona_id          INT           DEFAULT NULL,
+  descripcion      VARCHAR(255)  DEFAULT NULL,
+  precio_alquiler  DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  habitaciones     INT           DEFAULT 0,
+  banos            INT           DEFAULT 0,
+  metros_cuadrados DECIMAL(8,2)  DEFAULT NULL,
+  direccion        VARCHAR(255)  DEFAULT NULL,
+  estado           VARCHAR(1)    NOT NULL DEFAULT 'A',
+  creado_por       INT           DEFAULT NULL,
+  creado_en        DATETIME      DEFAULT NOW(),
+  modificado_por   INT           DEFAULT NULL,
+  modificado_en    DATETIME      DEFAULT NULL,
+  CONSTRAINT fk_inm_propietario     FOREIGN KEY (propietario_id)   REFERENCES propietarios  (id),
+  CONSTRAINT fk_inm_tipo            FOREIGN KEY (tipo_inmueble_id) REFERENCES tipos_inmueble (id),
+  CONSTRAINT fk_inm_zona            FOREIGN KEY (zona_id)          REFERENCES zonas          (id),
+  CONSTRAINT fk_inm_creado_por      FOREIGN KEY (creado_por)       REFERENCES usuarios       (id),
+  CONSTRAINT fk_inm_modificado_por  FOREIGN KEY (modificado_por)   REFERENCES usuarios       (id)
+);
+
+-- ------------------------------------------------------------
+-- TABLA: clientes
+-- (incluye auditoría)
+-- ------------------------------------------------------------
+CREATE TABLE clientes (
+  id             INT          AUTO_INCREMENT PRIMARY KEY,
+  codigo         VARCHAR(100) DEFAULT NULL,
+  nombres        VARCHAR(150) NOT NULL,
+  apellidos      VARCHAR(150) NOT NULL,
+  dpi            VARCHAR(20)  DEFAULT NULL,
+  nit            VARCHAR(20)  DEFAULT NULL,
+  telefono       VARCHAR(20)  DEFAULT NULL,
+  email          VARCHAR(150) DEFAULT NULL,
+  direccion      VARCHAR(255) DEFAULT NULL,
+  estado         VARCHAR(1)   NOT NULL DEFAULT 'A',
+  creado_por     INT          DEFAULT NULL,
+  creado_en      DATETIME     DEFAULT NOW(),
+  modificado_por INT          DEFAULT NULL,
+  modificado_en  DATETIME     DEFAULT NULL,
+  CONSTRAINT fk_cli_creado_por     FOREIGN KEY (creado_por)     REFERENCES usuarios (id),
+  CONSTRAINT fk_cli_modificado_por FOREIGN KEY (modificado_por) REFERENCES usuarios (id)
+);
+
+-- ------------------------------------------------------------
+-- TABLA: tipos_contrato
+-- ------------------------------------------------------------
+CREATE TABLE tipos_contrato (
+  id             INT          AUTO_INCREMENT PRIMARY KEY,
+  nombre         VARCHAR(100) NOT NULL,
+  duracion_meses INT          DEFAULT NULL,
+  descripcion    VARCHAR(255) DEFAULT NULL,
+  estado         VARCHAR(1)   NOT NULL DEFAULT 'A'
+);
+
+-- ------------------------------------------------------------
+-- TABLA: contratos
+-- (incluye auditoría)
+-- ------------------------------------------------------------
+CREATE TABLE contratos (
+  id               INT           AUTO_INCREMENT PRIMARY KEY,
+  numero_contrato  VARCHAR(50)   NOT NULL UNIQUE,
+  inmueble_id      INT           NOT NULL,
+  cliente_id       INT           NOT NULL,
+  tipo_contrato_id INT           NOT NULL,
+  usuario_id       INT           NOT NULL,
+  fecha_inicio     DATE          NOT NULL,
+  fecha_fin        DATE          DEFAULT NULL,
+  monto_mensual    DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  deposito         DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  dia_pago         INT           NOT NULL DEFAULT 1,
+  observaciones    VARCHAR(500)  DEFAULT NULL,
+  estado           VARCHAR(1)    NOT NULL DEFAULT 'A',
+  creado_por       INT           DEFAULT NULL,
+  creado_en        DATETIME      DEFAULT NOW(),
+  modificado_por   INT           DEFAULT NULL,
+  modificado_en    DATETIME      DEFAULT NULL,
+  CONSTRAINT fk_con_inmueble       FOREIGN KEY (inmueble_id)      REFERENCES inmuebles      (id),
+  CONSTRAINT fk_con_cliente        FOREIGN KEY (cliente_id)       REFERENCES clientes       (id),
+  CONSTRAINT fk_con_tipo           FOREIGN KEY (tipo_contrato_id) REFERENCES tipos_contrato (id),
+  CONSTRAINT fk_con_usuario        FOREIGN KEY (usuario_id)       REFERENCES usuarios       (id),
+  CONSTRAINT fk_con_creado_por     FOREIGN KEY (creado_por)       REFERENCES usuarios       (id),
+  CONSTRAINT fk_con_modificado_por FOREIGN KEY (modificado_por)   REFERENCES usuarios       (id)
+);
+
+-- ------------------------------------------------------------
+-- TABLA: pagos_alquiler
+-- (incluye auditoría)
+-- ------------------------------------------------------------
+CREATE TABLE pagos_alquiler (
+  id             INT           AUTO_INCREMENT PRIMARY KEY,
+  numero_recibo  VARCHAR(50)   NOT NULL UNIQUE,
+  contrato_id    INT           NOT NULL,
+  usuario_id     INT           NOT NULL,
+  fecha_pago     DATE          NOT NULL,
+  periodo_mes    DATE          NOT NULL,
+  monto_esperado DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  monto_pagado   DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  mora           DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  metodo_pago    VARCHAR(50)   DEFAULT NULL,
+  observaciones  VARCHAR(500)  DEFAULT NULL,
+  estado         VARCHAR(1)    NOT NULL DEFAULT 'A',
+  creado_por     INT           DEFAULT NULL,
+  creado_en      DATETIME      DEFAULT NOW(),
+  modificado_por INT           DEFAULT NULL,
+  modificado_en  DATETIME      DEFAULT NULL,
+  CONSTRAINT fk_pag_contrato       FOREIGN KEY (contrato_id)  REFERENCES contratos (id),
+  CONSTRAINT fk_pag_usuario        FOREIGN KEY (usuario_id)   REFERENCES usuarios  (id),
+  CONSTRAINT fk_pag_creado_por     FOREIGN KEY (creado_por)   REFERENCES usuarios  (id),
+  CONSTRAINT fk_pag_modificado_por FOREIGN KEY (modificado_por) REFERENCES usuarios (id)
+);
+
+-- ------------------------------------------------------------
+-- TABLA: bitacora
+-- Descripción: Historial completo de acciones sobre las
+--              tablas principales del sistema
+-- ------------------------------------------------------------
+CREATE TABLE bitacora (
+  id             INT          AUTO_INCREMENT PRIMARY KEY,
+  tabla_afectada VARCHAR(100) NOT NULL,
+  registro_id    INT          NOT NULL,
+  accion         VARCHAR(10)  NOT NULL,
+  datos_antes    VARCHAR(500) DEFAULT NULL,
+  datos_despues  VARCHAR(500) DEFAULT NULL,
+  usuario_id     INT          NOT NULL,
+  fecha_hora     DATETIME     NOT NULL DEFAULT NOW(),
+  ip_usuario     VARCHAR(45)  DEFAULT NULL,
+  CONSTRAINT fk_bit_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
+);
+
+-- ============================================================
+-- FIN DEL SCRIPT
+-- ============================================================
+
+ALTER TABLE usuarios 
+ADD COLUMN ROLE VARCHAR(20) NOT NULL DEFAULT 'gerente' AFTER clave
