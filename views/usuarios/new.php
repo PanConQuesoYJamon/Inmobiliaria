@@ -1,31 +1,65 @@
 <?php
-$pageTitle = 'Crear nuevos Usuarios';
-
+$pageTitle = 'Crear Usuario';
 ob_start();
 ?>
 
-<body>
-    <p><a href="index.php?action=usuarios">Volver a Usuarios</a></p>
+<div class="breadcrumb">
+    <a href="index.php?action=usuarios">Usuarios</a>
+    <span>›</span> Nuevo Usuario
+</div>
 
-    <!--<a href="index.php?action=new">CREAR NUEVO USUARIO</a> -->
+<div class="page-header">
+    <div>
+        <h2>Nuevo Usuario</h2>
+        <p class="text-muted">Complete los datos para crear un nuevo usuario</p>
+    </div>
+</div>
 
-    <form action="index.php?action=usuario_create" method="post">
-        
-        <label for="codigo">Codigo</label>
-        <input type="text" id="codigo" name="codigo">
+<div class="card">
+    <div class="card-body">
+        <form action="index.php?action=usuario_create" method="post">
 
-        <label for="nombre">Nombre</label>
-        <input type="text" id="nombre" name="nombre">
+            <div class="form-grid">
 
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username">
+                <div class="form-group">
+                    <label for="codigo">Código</label>
+                    <input type="text" id="codigo" name="codigo" required>
+                </div>
 
-        <label for="clave">Clave</label>
-        <input type="text" id="clave" name="clave">
+                <div class="form-group">
+                    <label for="nombre">Nombre completo</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
 
-        <button type="submit">Guardar</button>
-</form>
-</body>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="clave">Contraseña</label>
+                    <input type="password" id="clave" name="clave" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="rol">Rol</label>
+                    <select id="rol" name="rol">
+                        <option value="usuario">Usuario</option>
+                        <option value="admin">Administrador</option>
+                        <option value="supervisor">Supervisor</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a href="index.php?action=usuarios" class="btn btn-outline">Cancelar</a>
+            </div>
+
+        </form>
+    </div>
+</div>
 
 <?php
 $content = ob_get_clean();

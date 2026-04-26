@@ -1,37 +1,75 @@
 <?php
-$pageTitle = 'Editar Usuarios';
-
+$pageTitle = 'Editar Usuario';
 ob_start();
 ?>
 
-<body>
-    <p><a href="index.php?action=usuarios">Volver a Usuarios</a></p>
+<div class="breadcrumb">
+    <a href="index.php?action=usuarios">Usuarios</a>
+    <span>›</span> Editar Usuario
+</div>
 
-    <form action="index.php?action=usuario_update" method="post">
+<div class="page-header">
+    <div>
+        <h2>Editar Usuario</h2>
+        <p class="text-muted">Modifique los datos del usuario</p>
+    </div>
+</div>
 
-        <input type="hidden" name="codigo_original" value="<?php echo htmlspecialchars($usuario['codigo'] ?? ''); ?>">
+<div class="card">
+    <div class="card-body">
+        <form action="index.php?action=usuario_update" method="post">
 
-        <label for="codigo">Codigo</label>
-        <input type="text" id="codigo" name="codigo" value="<?php echo htmlspecialchars($usuario['codigo'] ?? ''); ?>">
+            <input type="hidden" name="codigo_original" value="<?php echo htmlspecialchars($usuario['codigo'] ?? ''); ?>">
 
-        <label for="nombre">Nombre</label>
-        <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($usuario['nombre'] ?? ''); ?>">
+            <div class="form-grid">
 
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($usuario['username'] ?? ''); ?>">
+                <div class="form-group">
+                    <label for="codigo">Código</label>
+                    <input type="text" id="codigo" name="codigo" value="<?php echo htmlspecialchars($usuario['codigo'] ?? ''); ?>" required>
+                </div>
 
-        <label for="clave">Clave</label>
-        <input type="password" id="clave" name="clave" placeholder="Ingrese nueva clave">
+                <div class="form-group">
+                    <label for="nombre">Nombre completo</label>
+                    <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($usuario['nombre'] ?? ''); ?>" required>
+                </div>
 
-        <label for="estado">Estado</label>
-        <select id="estado" name="estado">
-            <option value="A" <?= ($usuario['estado']?? '') === 'A' ? 'selected' : '' ?>>Activo</option>
-            <option value="I" <?= ($usuario['estado']?? '') === 'I' ? 'selected' : '' ?>>Inactivo</option>
-        </select>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($usuario['username'] ?? ''); ?>" required>
+                </div>
 
-        <button type="submit">Actualizar</button>
-    </form>
-</body>
+                <div class="form-group">
+                    <label for="clave">Contraseña <span class="text-muted">(dejar vacío para no cambiar)</span></label>
+                    <input type="password" id="clave" name="clave" placeholder="Nueva contraseña">
+                </div>
+
+                <div class="form-group">
+                    <label for="rol">Rol</label>
+                    <select id="rol" name="rol">
+                        <option value="usuario"    <?= ($usuario['rol'] ?? '') === 'usuario'    ? 'selected' : '' ?>>Usuario</option>
+                        <option value="admin"      <?= ($usuario['rol'] ?? '') === 'admin'      ? 'selected' : '' ?>>Administrador</option>
+                        <option value="supervisor" <?= ($usuario['rol'] ?? '') === 'supervisor' ? 'selected' : '' ?>>Supervisor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="estado">Estado</label>
+                    <select id="estado" name="estado">
+                        <option value="A" <?= ($usuario['estado'] ?? '') === 'A' ? 'selected' : '' ?>>Activo</option>
+                        <option value="I" <?= ($usuario['estado'] ?? '') === 'I' ? 'selected' : '' ?>>Inactivo</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+                <a href="index.php?action=usuarios" class="btn btn-outline">Cancelar</a>
+            </div>
+
+        </form>
+    </div>
+</div>
 
 <?php
 $content = ob_get_clean();

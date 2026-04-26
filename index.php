@@ -123,7 +123,7 @@ $router->add('pago_delete',         [$pagosAlquilerController, 'delete']);
 //Ruta para auntenticar
 $router->add('login',              [$authController, 'index']);
 $router->add('auntenticar',        [$authController, 'auntenticar']);
-//$router->add('logout',           [$authController, 'logout']);
+$router->add('logout',             [$authController, 'logout']);
 
 // Rutas: Bitácora (solo lectura)
 $router->add('bitacora',         [$bitacoraController, 'index']);

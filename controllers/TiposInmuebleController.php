@@ -12,9 +12,9 @@ class TiposInmuebleController {
         $this->modelo = new TipoInmuebleModel($conexion);
     }
 
-    /* -------------------------------------------------------
+    /* 
      * MÉTODOS DE PREPARACIÓN DE VISTA
-     * ----------------------------------------------------- */
+     *  */
 
     public function index(): void {
         $tipos = $this->modelo->getTiposInmueble();
@@ -36,9 +36,9 @@ class TiposInmuebleController {
         include __DIR__ . '/../views/tipos_inmueble/edit.php';
     }
 
-    /* -------------------------------------------------------
+    /* 
      * MÉTODOS DE ACCIÓN
-     * ----------------------------------------------------- */
+     *  */
 
     public function create(): void {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

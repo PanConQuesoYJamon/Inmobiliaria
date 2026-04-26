@@ -47,14 +47,15 @@
             <span class="nav-icon">&#9679;</span> Pagos de Alquiler
         </a>
 
-        <div class="sidebar-section">Sistema</div>
-        <a href="index.php?action=usuarios"        class="<?= (($_GET['action'] ?? '') === 'usuarios')       ? 'active' : '' ?>">
-            <span class="nav-icon">&#9670;</span> Usuarios
-        </a>
-        <a href="index.php?action=bitacora"        class="<?= (($_GET['action'] ?? '') === 'bitacora')       ? 'active' : '' ?>">
-            <span class="nav-icon">&#9670;</span> Bitácora
-        </a>
-
+        <?php if (in_array($_SESSION['usuario_rol'] ?? '', ['admin', 'supervisor'])): ?>
+            <div class="sidebar-section">Sistema</div>
+            <a href="index.php?action=usuarios"        class="<?= (($_GET['action'] ?? '') === 'usuarios')       ? 'active' : '' ?>">
+                <span class="nav-icon">&#9670;</span> Usuarios
+            </a>
+            <a href="index.php?action=bitacora"        class="<?= (($_GET['action'] ?? '') === 'bitacora')       ? 'active' : '' ?>">
+                <span class="nav-icon">&#9670;</span> Bitácora
+            </a>
+        <?php endif; ?>
     </nav>
 </aside>
 
@@ -63,6 +64,13 @@
 
     <header class="topbar">
         <span class="topbar-title"><?php echo $pageTitle ?? ''; ?></span>
+        <?php if (isset($_SESSION['usuario_id'])): ?>
+            <p class="text-muted mt-4">
+                Bienvenido, <strong><?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></strong>
+                | Rol: <?php echo htmlspecialchars($_SESSION['usuario_rol'] ?? ''); ?>
+                | <a href="index.php?action=logout">Cerrar Sesión</a>
+            </p>
+        <?php endif; ?>
         <span class="topbar-user">
             <?php echo $_SESSION['usuario_nombre'] ?? 'Usuario'; ?>
         </span>

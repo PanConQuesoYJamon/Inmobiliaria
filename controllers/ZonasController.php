@@ -12,9 +12,9 @@ class ZonasController {
         $this->modelo = new ZonaModel($conexion);
     }
 
-    /* -------------------------------------------------------
+    /* 
      * MÉTODOS DE PREPARACIÓN DE VISTA
-     * ----------------------------------------------------- */
+     *  */
 
     public function index(): void {
         $zonas = $this->modelo->getZonas();
@@ -36,9 +36,9 @@ class ZonasController {
         include __DIR__ . '/../views/zonas/edit.php';
     }
 
-    /* -------------------------------------------------------
+    /* 
      * MÉTODOS DE ACCIÓN
-     * ----------------------------------------------------- */
+     *  */
 
     public function create(): void {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

@@ -6,6 +6,7 @@ require_once __DIR__ . '/../models/TipoInmuebleModel.php';
 require_once __DIR__ . '/../models/ZonaModel.php';
 require_once __DIR__ . '/../models/BitacoraModel.php';
 require_once __DIR__ . '/../models/Conexion.php';
+require_once __DIR__ . '/../helpers/session.php';
 
 class InmueblesController {
 
@@ -14,6 +15,7 @@ class InmueblesController {
     private $modeloTipos;
     private $modeloZonas;
     private $bitacora;
+    private $sessionHelper;
 
     public function __construct() {
         $conexion                 = (new Conexion)->conectar();
@@ -22,18 +24,17 @@ class InmueblesController {
         $this->modeloTipos        = new TipoInmuebleModel($conexion);
         $this->modeloZonas        = new ZonaModel($conexion);
         $this->bitacora           = new BitacoraModel($conexion);
+        $this->sessionHelper      = new SessionHelper();
     }
 
-    /* -------------------------------------------------------
-     * MÉTODOS DE PREPARACIÓN DE VISTA
-     * ----------------------------------------------------- */
-
     public function index(): void {
+        $this->sessionHelper->verficarSession();
         $inmuebles = $this->modelo->getInmuebles();
         include __DIR__ . '/../views/inmuebles/listar_inmuebles.php';
     }
 
     public function new(): void {
+        $this->sessionHelper->verficarSession();
         $propietarios = $this->modeloPropietarios->getPropietarios();
         $tipos        = $this->modeloTipos->getTiposInmueble();
         $zonas        = $this->modeloZonas->getZonas();
@@ -41,6 +42,7 @@ class InmueblesController {
     }
 
     public function edit(): void {
+        $this->sessionHelper->verficarSession();
         $codigo = $_GET['codigo'] ?? null;
         if (!$codigo) {
             header('Location: index.php?action=inmuebles');
@@ -54,27 +56,24 @@ class InmueblesController {
         include __DIR__ . '/../views/inmuebles/edit.php';
     }
 
-    /* -------------------------------------------------------
-     * MÉTODOS DE ACCIÓN
-     * ----------------------------------------------------- */
-
     public function create(): void {
+        $this->sessionHelper->verficarSession();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=inmuebles');
             exit;
         }
 
         $datos = [
-            'codigo'           => trim($_POST['codigo']           ?? ''),
-            'propietario_id'   => (int)($_POST['propietario_id']  ?? 0),
-            'tipo_inmueble_id' => (int)($_POST['tipo_inmueble_id']?? 0),
-            'zona_id'          => (int)($_POST['zona_id']         ?? 0),
-            'descripcion'      => trim($_POST['descripcion']      ?? ''),
+            'codigo'           => trim($_POST['codigo']             ?? ''),
+            'propietario_id'   => (int)($_POST['propietario_id']    ?? 0),
+            'tipo_inmueble_id' => (int)($_POST['tipo_inmueble_id']  ?? 0),
+            'zona_id'          => (int)($_POST['zona_id']           ?? 0),
+            'descripcion'      => trim($_POST['descripcion']        ?? ''),
             'precio_alquiler'  => (float)($_POST['precio_alquiler'] ?? 0),
-            'habitaciones'     => (int)($_POST['habitaciones']    ?? 0),
-            'banos'            => (int)($_POST['banos']           ?? 0),
-            'metros_cuadrados' => (float)($_POST['metros_cuadrados'] ?? 0),
-            'direccion'        => trim($_POST['direccion']        ?? '')
+            'habitaciones'     => (int)($_POST['habitaciones']      ?? 0),
+            'banos'            => (int)($_POST['banos']             ?? 0),
+            'metros_cuadrados' => (float)($_POST['metros_cuadrados']?? 0),
+            'direccion'        => trim($_POST['direccion']          ?? '')
         ];
 
         $usuarioId = $_SESSION['usuario_id'] ?? null;
@@ -96,6 +95,7 @@ class InmueblesController {
     }
 
     public function update(): void {
+        $this->sessionHelper->verficarSession();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=inmuebles');
             exit;
@@ -106,17 +106,17 @@ class InmueblesController {
         $antes          = $this->modelo->getInmueble($codigoOriginal);
 
         $datos = [
-            'codigo'           => trim($_POST['codigo']           ?? ''),
-            'propietario_id'   => (int)($_POST['propietario_id']  ?? 0),
-            'tipo_inmueble_id' => (int)($_POST['tipo_inmueble_id']?? 0),
-            'zona_id'          => (int)($_POST['zona_id']         ?? 0),
-            'descripcion'      => trim($_POST['descripcion']      ?? ''),
+            'codigo'           => trim($_POST['codigo']             ?? ''),
+            'propietario_id'   => (int)($_POST['propietario_id']    ?? 0),
+            'tipo_inmueble_id' => (int)($_POST['tipo_inmueble_id']  ?? 0),
+            'zona_id'          => (int)($_POST['zona_id']           ?? 0),
+            'descripcion'      => trim($_POST['descripcion']        ?? ''),
             'precio_alquiler'  => (float)($_POST['precio_alquiler'] ?? 0),
-            'habitaciones'     => (int)($_POST['habitaciones']    ?? 0),
-            'banos'            => (int)($_POST['banos']           ?? 0),
-            'metros_cuadrados' => (float)($_POST['metros_cuadrados'] ?? 0),
-            'direccion'        => trim($_POST['direccion']        ?? ''),
-            'estado'           => trim($_POST['estado']           ?? 'A')
+            'habitaciones'     => (int)($_POST['habitaciones']      ?? 0),
+            'banos'            => (int)($_POST['banos']             ?? 0),
+            'metros_cuadrados' => (float)($_POST['metros_cuadrados']?? 0),
+            'direccion'        => trim($_POST['direccion']          ?? ''),
+            'estado'           => trim($_POST['estado']             ?? 'A')
         ];
 
         $resultado = $this->modelo->actualizarInmueble($datos, $codigoOriginal, $usuarioId);
@@ -137,6 +137,7 @@ class InmueblesController {
     }
 
     public function delete(): void {
+        $this->sessionHelper->verficarSession();
         $codigo = $_GET['codigo'] ?? null;
         if (!$codigo) {
             header('Location: index.php?action=inmuebles');

@@ -3,32 +3,34 @@
 require_once __DIR__ . '/../models/PropietarioModel.php';
 require_once __DIR__ . '/../models/BitacoraModel.php';
 require_once __DIR__ . '/../models/Conexion.php';
+require_once __DIR__ . '/../helpers/session.php';
 
 class PropietariosController {
 
     private $modelo;
     private $bitacora;
+    private $sessionHelper;
 
     public function __construct() {
-        $conexion       = (new Conexion)->conectar();
-        $this->modelo   = new PropietarioModel($conexion);
-        $this->bitacora = new BitacoraModel($conexion);
+        $conexion            = (new Conexion)->conectar();
+        $this->modelo        = new PropietarioModel($conexion);
+        $this->bitacora      = new BitacoraModel($conexion);
+        $this->sessionHelper = new SessionHelper();
     }
 
-    /* -------------------------------------------------------
-     * MÉTODOS DE PREPARACIÓN DE VISTA
-     * ----------------------------------------------------- */
-
     public function index(): void {
+        $this->sessionHelper->verficarSession();
         $propietarios = $this->modelo->getPropietarios();
         include __DIR__ . '/../views/propietarios/listar_propietarios.php';
     }
 
     public function new(): void {
+        $this->sessionHelper->verficarSession();
         include __DIR__ . '/../views/propietarios/new.php';
     }
 
     public function edit(): void {
+        $this->sessionHelper->verficarSession();
         $codigo = $_GET['codigo'] ?? null;
         if (!$codigo) {
             header('Location: index.php?action=propietarios');
@@ -38,11 +40,8 @@ class PropietariosController {
         include __DIR__ . '/../views/propietarios/edit.php';
     }
 
-    /* -------------------------------------------------------
-     * MÉTODOS DE ACCIÓN
-     * ----------------------------------------------------- */
-
     public function create(): void {
+        $this->sessionHelper->verficarSession();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=propietarios');
             exit;
@@ -78,6 +77,7 @@ class PropietariosController {
     }
 
     public function update(): void {
+        $this->sessionHelper->verficarSession();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=propietarios');
             exit;
@@ -117,6 +117,7 @@ class PropietariosController {
     }
 
     public function delete(): void {
+        $this->sessionHelper->verficarSession();
         $codigo = $_GET['codigo'] ?? null;
         if (!$codigo) {
             header('Location: index.php?action=propietarios');

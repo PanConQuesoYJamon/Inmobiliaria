@@ -26,7 +26,6 @@ class AuthController {
 
     /**
      * Procesa el formulario de login
-     * Nota: el nombre del método coincide con la ruta 'auntenticar' del router
      */
     public function auntenticar(): void {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -44,27 +43,35 @@ class AuthController {
         $clave    = trim($_POST['clave']    ?? '');
 
         $usuario = $this->modelo->getUsuarioByUsername($username);
-        
 
-        // Después — soporta tanto texto plano como hash
-        if ($usuario && password_verify($clave, $usuario['clave'])) {
+        if ($usuario && (password_verify($clave, $usuario['clave']) || $clave === $usuario['clave'])) {
 
-            $_SESSION['usuario_id']     = $usuario['id'];      // usado por auditoría
-            $_SESSION['usuario_codigo'] = $usuario['codigo'];
-            $_SESSION['usuario_nombre'] = $usuario['nombre'];
-            $_SESSION['usuario_username']= $usuario['username'];
+            // session_regenerate_id ANTES de la redirección
+            session_regenerate_id(true);
+
+            $_SESSION['usuario_id']       = $usuario['id'];
+            $_SESSION['usuario_codigo']   = $usuario['codigo'];
+            $_SESSION['usuario_nombre']   = $usuario['nombre'];
+            $_SESSION['usuario_username'] = $usuario['username'];
+            $_SESSION['usuario_rol']      = $usuario['rol'] ?? '';
 
             header('Location: index.php?action=usuarios');
             exit;
 
         } else {
-            // Autenticación fallida
-            $error = 'Credenciales inválidas. Inténtalo de nuevo.';
-            $this->secureTokenCsrf();
-            $csrfToken = $_SESSION['csrf_token'];
-            include __DIR__ . '/../views/auth/index.php';
-            exit;
+            $this->auntenticacionFallida('Credenciales inválidas. Inténtalo de nuevo.');
         }
+    }
+
+    /**
+     * Maneja el error de autenticación fallida
+     */
+    public function auntenticacionFallida(string $error = ''): void {
+        $this->secureTokenCsrf();
+        $errorView = $error;
+        $csrfToken = $_SESSION['csrf_token'];
+        include __DIR__ . '/../views/auth/index.php';
+        exit;
     }
 
     /**
@@ -77,9 +84,9 @@ class AuthController {
         exit;
     }
 
-    /*
+    /* 
      * Métodos privados — manejo del token CSRF
-    */
+     *  */
 
     private function secureTokenCsrf(): void {
         if (empty($_SESSION['csrf_token'])) {

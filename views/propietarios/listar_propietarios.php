@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <a href="index.php?action=propietario_new">CREAR NUEVO PROPIETARIO</a>
+    <a href="index.php?action=propietario_new" class="btn btn-primary">CREAR NUEVO PROPIETARIO</a>
     <table>
         <thead>
             <tr>
@@ -35,9 +35,9 @@ ob_start();
                     <td><?php echo htmlspecialchars($propietario['email']); ?></td>
                     <td><?php echo htmlspecialchars($propietario['estado']); ?></td>
                     <td><?php echo htmlspecialchars($propietario['creado_por_nombre'] ?? ''); ?></td>
-                    <td>
-                        <a href="index.php?action=propietario_edit&codigo=<?php echo urlencode($propietario['codigo']); ?>">Actualizar</a>
-                        <a href="index.php?action=propietario_delete&codigo=<?php echo urlencode($propietario['codigo']); ?>" onclick="return confirm('¿Está seguro que desea eliminar este propietario?')">Eliminar</a>
+                    <td class="flex gap-8">
+                        <a href="index.php?action=propietario_edit&codigo=<?php echo urlencode($propietario['codigo']); ?>" class="btn btn-edit">Actualizar</a>
+                        <a href="index.php?action=propietario_delete&codigo=<?php echo urlencode($propietario['codigo']); ?>" class="btn btn-danger" onclick="return confirm('¿Está seguro que desea eliminar este propietario?')">Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

@@ -3,32 +3,34 @@
 require_once __DIR__ . '/../models/ClienteModel.php';
 require_once __DIR__ . '/../models/BitacoraModel.php';
 require_once __DIR__ . '/../models/Conexion.php';
+require_once __DIR__ . '/../helpers/session.php';
 
 class ClientesController {
 
     private $modelo;
     private $bitacora;
+    private $sessionHelper;
 
     public function __construct() {
-        $conexion       = (new Conexion)->conectar();
-        $this->modelo   = new ClienteModel($conexion);
-        $this->bitacora = new BitacoraModel($conexion);
+        $conexion            = (new Conexion)->conectar();
+        $this->modelo        = new ClienteModel($conexion);
+        $this->bitacora      = new BitacoraModel($conexion);
+        $this->sessionHelper = new SessionHelper();
     }
 
-    /* -------------------------------------------------------
-     * MÉTODOS DE PREPARACIÓN DE VISTA
-     * ----------------------------------------------------- */
-
     public function index(): void {
+        $this->sessionHelper->verficarSession();
         $clientes = $this->modelo->getClientes();
         include __DIR__ . '/../views/clientes/listar_clientes.php';
     }
 
     public function new(): void {
+        $this->sessionHelper->verficarSession();
         include __DIR__ . '/../views/clientes/new.php';
     }
 
     public function edit(): void {
+        $this->sessionHelper->verficarSession();
         $codigo = $_GET['codigo'] ?? null;
         if (!$codigo) {
             header('Location: index.php?action=clientes');
@@ -38,11 +40,8 @@ class ClientesController {
         include __DIR__ . '/../views/clientes/edit.php';
     }
 
-    /* -------------------------------------------------------
-     * MÉTODOS DE ACCIÓN
-     * ----------------------------------------------------- */
-
     public function create(): void {
+        $this->sessionHelper->verficarSession();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=clientes');
             exit;
@@ -78,6 +77,7 @@ class ClientesController {
     }
 
     public function update(): void {
+        $this->sessionHelper->verficarSession();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=clientes');
             exit;
@@ -117,6 +117,7 @@ class ClientesController {
     }
 
     public function delete(): void {
+        $this->sessionHelper->verficarSession();
         $codigo = $_GET['codigo'] ?? null;
         if (!$codigo) {
             header('Location: index.php?action=clientes');

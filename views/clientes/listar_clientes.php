@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <a href="index.php?action=cliente_new">CREAR NUEVO CLIENTE</a>
+    <a href="index.php?action=cliente_new" class="btn btn-primary">CREAR NUEVO CLIENTE</a>
     <table>
         <thead>
             <tr>
@@ -35,9 +35,9 @@ ob_start();
                     <td><?php echo htmlspecialchars($cliente['email']); ?></td>
                     <td><?php echo htmlspecialchars($cliente['estado']); ?></td>
                     <td><?php echo htmlspecialchars($cliente['creado_por_nombre'] ?? ''); ?></td>
-                    <td>
-                        <a href="index.php?action=cliente_edit&codigo=<?php echo urlencode($cliente['codigo']); ?>">Actualizar</a>
-                        <a href="index.php?action=cliente_delete&codigo=<?php echo urlencode($cliente['codigo']); ?>" onclick="return confirm('¿Está seguro que desea eliminar este cliente?')">Eliminar</a>
+                    <td class="flex gap-8">
+                        <a href="index.php?action=cliente_edit&codigo=<?php echo urlencode($cliente['codigo']); ?>"class="btn btn-edit">Actualizar</a>
+                        <a href="index.php?action=cliente_delete&codigo=<?php echo urlencode($cliente['codigo']); ?>"  class="btn btn-danger" onclick="return confirm('¿Está seguro que desea eliminar este cliente?')">Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

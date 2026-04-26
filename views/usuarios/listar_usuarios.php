@@ -1,10 +1,6 @@
 <?php
-// Ejemplo de cómo usar el layout en cualquier vista
-// Aplica el mismo patrón para todas las demás vistas
-
 $pageTitle = 'Usuarios';
-
-ob_start(); // Inicia captura del contenido
+ob_start();
 ?>
 
 <div class="page-header">
@@ -20,9 +16,10 @@ ob_start(); // Inicia captura del contenido
         <table>
             <thead>
                 <tr>
-                    <th>Codigo</th>
+                    <th>Código</th>
                     <th>Nombre</th>
                     <th>Username</th>
+                    <th>Rol</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -33,6 +30,15 @@ ob_start(); // Inicia captura del contenido
                         <td class="text-mono"><?php echo htmlspecialchars($user['codigo']); ?></td>
                         <td><?php echo htmlspecialchars($user['nombre']); ?></td>
                         <td><?php echo htmlspecialchars($user['username']); ?></td>
+                        <td>
+                            <?php if($user['rol'] === 'admin'): ?>
+                                <span class="badge badge-active">Administrador</span>
+                            <?php elseif($user['rol'] === 'supervisor'): ?>
+                                <span class="badge badge-warning">Supervisor</span>
+                            <?php else: ?>
+                                <span class="badge">Usuario</span>
+                            <?php endif; ?>
+                        </td>
                         <td>
                             <?php if($user['estado'] === 'A'): ?>
                                 <span class="badge badge-active">Activo</span>
@@ -52,6 +58,6 @@ ob_start(); // Inicia captura del contenido
 </div>
 
 <?php
-$content = ob_get_clean(); // Captura el HTML generado
-include __DIR__ . '/../../assets/layout/layout.php'; // Aplica el layout
+$content = ob_get_clean();
+include __DIR__ . '/../../assets/layout/layout.php';
 ?>

@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <a href="index.php?action=zona_new">CREAR NUEVA ZONA</a>
+    <a href="index.php?action=zona_new" class="btn btn-primary" >CREAR NUEVA ZONA</a>
     <table>
         <thead>
             <tr>
@@ -25,9 +25,9 @@ ob_start();
                     <td><?php echo htmlspecialchars($zona['municipio']); ?></td>
                     <td><?php echo htmlspecialchars($zona['departamento']); ?></td>
                     <td><?php echo htmlspecialchars($zona['estado']); ?></td>
-                    <td>
-                        <a href="index.php?action=zona_edit&id=<?php echo urlencode($zona['id']); ?>">Actualizar</a>
-                        <a href="index.php?action=zona_delete&id=<?php echo urlencode($zona['id']); ?>" onclick="return confirm('¿Está seguro que desea eliminar esta zona?')">Eliminar</a>
+                    <td class="flex gap-8">
+                        <a href="index.php?action=zona_edit&id=<?php echo urlencode($zona['id']); ?>" class="btn btn-edit">Actualizar</a>
+                        <a href="index.php?action=zona_delete&id=<?php echo urlencode($zona['id']); ?>" class="btn btn-danger" onclick="return confirm('¿Está seguro que desea eliminar esta zona?')">Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

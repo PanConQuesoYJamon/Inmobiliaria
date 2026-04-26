@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <a href="index.php?action=pago_new">REGISTRAR NUEVO PAGO</a>
+    <a href="index.php?action=pago_new" class="btn btn-primary">REGISTRAR NUEVO PAGO</a>
     <table>
         <thead>
             <tr>
@@ -39,9 +39,9 @@ ob_start();
                     <td><?php echo htmlspecialchars($pago['metodo_pago']); ?></td>
                     <td><?php echo htmlspecialchars($pago['estado']); ?></td>
                     <td><?php echo htmlspecialchars($pago['creado_por_nombre'] ?? ''); ?></td>
-                    <td>
-                        <a href="index.php?action=pago_edit&numero_recibo=<?php echo urlencode($pago['numero_recibo']); ?>">Actualizar</a>
-                        <a href="index.php?action=pago_delete&numero_recibo=<?php echo urlencode($pago['numero_recibo']); ?>" onclick="return confirm('¿Está seguro que desea eliminar este pago?')">Eliminar</a>
+                    <td class="flex gap-8">
+                        <a href="index.php?action=pago_edit&numero_recibo=<?php echo urlencode($pago['numero_recibo']); ?>" class="btn btn-edit">Actualizar</a>
+                        <a href="index.php?action=pago_delete&numero_recibo=<?php echo urlencode($pago['numero_recibo']); ?>" class="btn btn-danger" onclick="return confirm('¿Está seguro que desea eliminar este pago?')">Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

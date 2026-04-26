@@ -12,9 +12,9 @@ class TiposContratoController {
         $this->modelo = new TipoContratoModel($conexion);
     }
 
-    /* -------------------------------------------------------
+    /* 
      * MÉTODOS DE PREPARACIÓN DE VISTA
-     * ----------------------------------------------------- */
+      */
 
     public function index(): void {
         $tipos = $this->modelo->getTiposContrato();
@@ -36,9 +36,9 @@ class TiposContratoController {
         include __DIR__ . '/../views/tipos_contrato/edit.php';
     }
 
-    /* -------------------------------------------------------
+    /* 
      * MÉTODOS DE ACCIÓN
-     * ----------------------------------------------------- */
+     *  */
 
     public function create(): void {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

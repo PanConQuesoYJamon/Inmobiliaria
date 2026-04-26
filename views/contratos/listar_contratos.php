@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <a href="index.php?action=contrato_new">CREAR NUEVO CONTRATO</a>
+    <a href="index.php?action=contrato_new" class="btn btn-primary">CREAR NUEVO CONTRATO</a>
     <table>
         <thead>
             <tr>
@@ -37,9 +37,9 @@ ob_start();
                     <td><?php echo htmlspecialchars($contrato['dia_pago']); ?></td>
                     <td><?php echo htmlspecialchars($contrato['estado']); ?></td>
                     <td><?php echo htmlspecialchars($contrato['creado_por_nombre'] ?? ''); ?></td>
-                    <td>
-                        <a href="index.php?action=contrato_edit&numero_contrato=<?php echo urlencode($contrato['numero_contrato']); ?>">Actualizar</a>
-                        <a href="index.php?action=contrato_delete&numero_contrato=<?php echo urlencode($contrato['numero_contrato']); ?>" onclick="return confirm('¿Está seguro que desea eliminar este contrato?')">Eliminar</a>
+                    <td class="flex gap-8">
+                        <a href="index.php?action=contrato_edit&numero_contrato=<?php echo urlencode($contrato['numero_contrato']); ?>"class="btn btn-edit">Actualizar</a>
+                        <a href="index.php?action=contrato_delete&numero_contrato=<?php echo urlencode($contrato['numero_contrato']); ?>" class="btn btn-danger" onclick="return confirm('¿Está seguro que desea eliminar este contrato?')">Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

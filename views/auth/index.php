@@ -16,7 +16,6 @@ ob_start();
 
             <form method="POST" action="index.php?action=auntenticar">
 
-                <!-- token CSRF corregido: input type="hidden", no <hidden> -->
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken ?? ''); ?>">
 
                 <div class="form-group" style="margin-bottom:16px;">

@@ -7,6 +7,7 @@ require_once __DIR__ . '/../models/TipoContratoModel.php';
 require_once __DIR__ . '/../models/UsuarioModel.php';
 require_once __DIR__ . '/../models/BitacoraModel.php';
 require_once __DIR__ . '/../models/Conexion.php';
+require_once __DIR__ . '/../helpers/session.php';
 
 class ContratosController {
 
@@ -16,6 +17,7 @@ class ContratosController {
     private $modeloTipos;
     private $modeloUsuarios;
     private $bitacora;
+    private $sessionHelper;
 
     public function __construct() {
         $conexion              = (new Conexion)->conectar();
@@ -25,18 +27,17 @@ class ContratosController {
         $this->modeloTipos     = new TipoContratoModel($conexion);
         $this->modeloUsuarios  = new UsuarioModel($conexion);
         $this->bitacora        = new BitacoraModel($conexion);
+        $this->sessionHelper   = new SessionHelper();
     }
 
-    /* -------------------------------------------------------
-     * MÉTODOS DE PREPARACIÓN DE VISTA
-     * ----------------------------------------------------- */
-
     public function index(): void {
+        $this->sessionHelper->verficarSession();
         $contratos = $this->modelo->getContratos();
         include __DIR__ . '/../views/contratos/listar_contratos.php';
     }
 
     public function new(): void {
+        $this->sessionHelper->verficarSession();
         $inmuebles = $this->modeloInmuebles->getInmuebles();
         $clientes  = $this->modeloClientes->getClientes();
         $tipos     = $this->modeloTipos->getTiposContrato();
@@ -45,6 +46,7 @@ class ContratosController {
     }
 
     public function edit(): void {
+        $this->sessionHelper->verficarSession();
         $numero = $_GET['numero_contrato'] ?? null;
         if (!$numero) {
             header('Location: index.php?action=contratos');
@@ -59,11 +61,8 @@ class ContratosController {
         include __DIR__ . '/../views/contratos/edit.php';
     }
 
-    /* -------------------------------------------------------
-     * MÉTODOS DE ACCIÓN
-     * ----------------------------------------------------- */
-
     public function create(): void {
+        $this->sessionHelper->verficarSession();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=contratos');
             exit;
@@ -102,6 +101,7 @@ class ContratosController {
     }
 
     public function update(): void {
+        $this->sessionHelper->verficarSession();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=contratos');
             exit;
@@ -144,6 +144,7 @@ class ContratosController {
     }
 
     public function delete(): void {
+        $this->sessionHelper->verficarSession();
         $numero = $_GET['numero_contrato'] ?? null;
         if (!$numero) {
             header('Location: index.php?action=contratos');

@@ -1,141 +1,194 @@
-// ============================================================
-//  DIAGRAMA: INMOBILIARIA - RENTA DE APARTAMENTOS
-//  Versión: 1.2 (con auditoría y bitácora)
-//  Herramienta: dbdiagram.io
-// ============================================================
+Project Inmobiliaria {
+  database_type: "MySQL"
+  Note: "Sistema de renta de apartamentos - DER"
+}
 
 Table usuarios {
-  id       integer      [primary key, increment]
-  codigo   varchar(100)
-  nombre   varchar(100)
+  id int [pk, increment]
+  codigo varchar(100)
+  nombre varchar(100)
   username varchar(100) [not null]
-  clave    varchar(100) [not null]
-  estado   varchar(1)   [not null]
+  clave varchar(255) [not null]
+  estado varchar(1) [default: 'A']
+  rol varchar(20) [default: 'usuario']
 }
 
 Table zonas {
-  id           integer      [primary key, increment]
-  nombre       varchar(100) [not null]
-  municipio    varchar(100)
+  id int [pk, increment]
+  nombre varchar(100) [not null]
+  municipio varchar(100)
   departamento varchar(100)
-  estado       varchar(1)   [not null, default: 'A']
+  estado varchar(1) [default: 'A']
 }
 
 Table tipos_inmueble {
-  id          integer      [primary key, increment]
-  nombre      varchar(100) [not null]
+  id int [pk, increment]
+  nombre varchar(100) [not null]
   descripcion varchar(255)
-  estado      varchar(1)   [not null, default: 'A']
+  estado varchar(1) [default: 'A']
 }
 
 Table propietarios {
-  id             integer      [primary key, increment]
-  codigo         varchar(100)
-  nombres        varchar(150) [not null]
-  apellidos      varchar(150) [not null]
-  dpi            varchar(20)
-  nit            varchar(20)
-  telefono       varchar(20)
-  email          varchar(150)
-  direccion      varchar(255)
-  estado         varchar(1)   [not null, default: 'A']
-  creado_por     integer      [ref: > usuarios.id, note: 'Usuario que creó el registro']
-  creado_en      datetime     [default: `NOW()`]
-  modificado_por integer      [ref: > usuarios.id, note: 'Usuario que modificó por última vez']
-  modificado_en  datetime
+  id int [pk, increment]
+  codigo varchar(100)
+  nombres varchar(150) [not null]
+  apellidos varchar(150) [not null]
+  dpi varchar(20)
+  nit varchar(20)
+  telefono varchar(20)
+  email varchar(150)
+  direccion varchar(255)
+  estado varchar(1) [default: 'A']
+
+  creado_por int
+  creado_en datetime
+  modificado_por int
+  modificado_en datetime
 }
 
 Table inmuebles {
-  id               integer       [primary key, increment]
-  codigo           varchar(100)
-  propietario_id   integer       [not null, ref: > propietarios.id]
-  tipo_inmueble_id integer       [not null, ref: > tipos_inmueble.id]
-  zona_id          integer       [ref: > zonas.id]
-  descripcion      varchar(255)
-  precio_alquiler  decimal(10,2) [not null, default: 0]
-  habitaciones     integer       [default: 0]
-  banos            integer       [default: 0]
+  id int [pk, increment]
+  codigo varchar(100)
+
+  propietario_id int [not null]
+  tipo_inmueble_id int [not null]
+  zona_id int
+
+  descripcion varchar(255)
+  precio_alquiler decimal(10,2) [default: 0.00]
+  habitaciones int [default: 0]
+  banos int [default: 0]
   metros_cuadrados decimal(8,2)
-  direccion        varchar(255)
-  estado           varchar(1)    [not null, default: 'A']
-  creado_por       integer       [ref: > usuarios.id, note: 'Usuario que creó el registro']
-  creado_en        datetime      [default: `NOW()`]
-  modificado_por   integer       [ref: > usuarios.id, note: 'Usuario que modificó por última vez']
-  modificado_en    datetime
+  direccion varchar(255)
+
+  estado varchar(1) [default: 'A']
+
+  creado_por int
+  creado_en datetime
+  modificado_por int
+  modificado_en datetime
 }
 
 Table clientes {
-  id             integer      [primary key, increment]
-  codigo         varchar(100)
-  nombres        varchar(150) [not null]
-  apellidos      varchar(150) [not null]
-  dpi            varchar(20)
-  nit            varchar(20)
-  telefono       varchar(20)
-  email          varchar(150)
-  direccion      varchar(255)
-  estado         varchar(1)   [not null, default: 'A']
-  creado_por     integer      [ref: > usuarios.id, note: 'Usuario que creó el registro']
-  creado_en      datetime     [default: `NOW()`]
-  modificado_por integer      [ref: > usuarios.id, note: 'Usuario que modificó por última vez']
-  modificado_en  datetime
+  id int [pk, increment]
+  codigo varchar(100)
+  nombres varchar(150) [not null]
+  apellidos varchar(150) [not null]
+  dpi varchar(20)
+  nit varchar(20)
+  telefono varchar(20)
+  email varchar(150)
+  direccion varchar(255)
+
+  estado varchar(1) [default: 'A']
+
+  creado_por int
+  creado_en datetime
+  modificado_por int
+  modificado_en datetime
 }
 
 Table tipos_contrato {
-  id             integer      [primary key, increment]
-  nombre         varchar(100) [not null]
-  duracion_meses integer
-  descripcion    varchar(255)
-  estado         varchar(1)   [not null, default: 'A']
+  id int [pk, increment]
+  nombre varchar(100) [not null]
+  duracion_meses int
+  descripcion varchar(255)
+  estado varchar(1) [default: 'A']
 }
 
 Table contratos {
-  id               integer       [primary key, increment]
-  numero_contrato  varchar(50)   [not null, unique]
-  inmueble_id      integer       [not null, ref: > inmuebles.id]
-  cliente_id       integer       [not null, ref: > clientes.id]
-  tipo_contrato_id integer       [not null, ref: > tipos_contrato.id]
-  usuario_id       integer       [not null, ref: > usuarios.id]
-  fecha_inicio     date          [not null]
-  fecha_fin        date
-  monto_mensual    decimal(10,2) [not null, default: 0]
-  deposito         decimal(10,2) [not null, default: 0]
-  dia_pago         integer       [not null, default: 1, note: 'Día del mes en que vence el pago']
-  observaciones    varchar(500)
-  estado           varchar(1)    [not null, default: 'A', note: 'A=Activo, I=Inactivo, V=Vencido, R=Rescindido']
-  creado_por       integer       [ref: > usuarios.id, note: 'Usuario que creó el registro']
-  creado_en        datetime      [default: `NOW()`]
-  modificado_por   integer       [ref: > usuarios.id, note: 'Usuario que modificó por última vez']
-  modificado_en    datetime
+  id int [pk, increment]
+
+  numero_contrato varchar(50) [unique, not null]
+
+  inmueble_id int [not null]
+  cliente_id int [not null]
+  tipo_contrato_id int [not null]
+  usuario_id int [not null]
+
+  fecha_inicio date [not null]
+  fecha_fin date
+
+  monto_mensual decimal(10,2) [default: 0.00]
+  deposito decimal(10,2) [default: 0.00]
+
+  dia_pago int [default: 1]
+  observaciones varchar(500)
+
+  estado varchar(1) [default: 'A']
+
+  creado_por int
+  creado_en datetime
+  modificado_por int
+  modificado_en datetime
 }
 
 Table pagos_alquiler {
-  id             integer       [primary key, increment]
-  numero_recibo  varchar(50)   [not null, unique]
-  contrato_id    integer       [not null, ref: > contratos.id]
-  usuario_id     integer       [not null, ref: > usuarios.id]
-  fecha_pago     date          [not null]
-  periodo_mes    date          [not null, note: 'Primer día del mes al que corresponde el pago']
-  monto_esperado decimal(10,2) [not null, default: 0]
-  monto_pagado   decimal(10,2) [not null, default: 0]
-  mora           decimal(10,2) [not null, default: 0]
-  metodo_pago    varchar(50)   [note: 'Efectivo, transferencia, cheque, etc.']
-  observaciones  varchar(500)
-  estado         varchar(1)    [not null, default: 'A', note: 'A=Aplicado, P=Pendiente, I=Anulado']
-  creado_por     integer       [ref: > usuarios.id, note: 'Usuario que creó el registro']
-  creado_en      datetime      [default: `NOW()`]
-  modificado_por integer       [ref: > usuarios.id, note: 'Usuario que modificó por última vez']
-  modificado_en  datetime
+  id int [pk, increment]
+
+  numero_recibo varchar(50) [unique, not null]
+
+  contrato_id int [not null]
+  usuario_id int [not null]
+
+  fecha_pago date [not null]
+  periodo_mes date [not null]
+
+  monto_esperado decimal(10,2) [default: 0.00]
+  monto_pagado decimal(10,2) [default: 0.00]
+  mora decimal(10,2) [default: 0.00]
+
+  metodo_pago varchar(50)
+  observaciones varchar(500)
+
+  estado varchar(1) [default: 'A']
+
+  creado_por int
+  creado_en datetime
+  modificado_por int
+  modificado_en datetime
 }
 
 Table bitacora {
-  id             integer      [primary key, increment]
-  tabla_afectada varchar(100) [not null, note: 'Nombre de la tabla afectada']
-  registro_id    integer      [not null, note: 'ID del registro afectado']
-  accion         varchar(10)  [not null, note: 'INSERT, UPDATE, DELETE']
-  datos_antes    varchar(500) [note: 'Valores antes del cambio']
-  datos_despues  varchar(500) [note: 'Valores después del cambio']
-  usuario_id     integer      [not null, ref: > usuarios.id]
-  fecha_hora     datetime     [not null, default: `NOW()`]
-  ip_usuario     varchar(45)  [note: 'IP desde donde se realizó la acción']
+  id int [pk, increment]
+
+  tabla_afectada varchar(100) [not null]
+  registro_id int [not null]
+  accion varchar(10) [not null]
+
+  datos_antes varchar(500)
+  datos_despues varchar(500)
+
+  usuario_id int [not null]
+  fecha_hora datetime
+  ip_usuario varchar(45)
 }
+
+
+/* RELACIONES */
+
+Ref: propietarios.creado_por > usuarios.id
+Ref: propietarios.modificado_por > usuarios.id
+
+Ref: clientes.creado_por > usuarios.id
+Ref: clientes.modificado_por > usuarios.id
+
+Ref: inmuebles.propietario_id > propietarios.id
+Ref: inmuebles.tipo_inmueble_id > tipos_inmueble.id
+Ref: inmuebles.zona_id > zonas.id
+Ref: inmuebles.creado_por > usuarios.id
+Ref: inmuebles.modificado_por > usuarios.id
+
+Ref: contratos.inmueble_id > inmuebles.id
+Ref: contratos.cliente_id > clientes.id
+Ref: contratos.tipo_contrato_id > tipos_contrato.id
+Ref: contratos.usuario_id > usuarios.id
+Ref: contratos.creado_por > usuarios.id
+Ref: contratos.modificado_por > usuarios.id
+
+Ref: pagos_alquiler.contrato_id > contratos.id
+Ref: pagos_alquiler.usuario_id > usuarios.id
+Ref: pagos_alquiler.creado_por > usuarios.id
+Ref: pagos_alquiler.modificado_por > usuarios.id
+
+Ref: bitacora.usuario_id > usuarios.id
