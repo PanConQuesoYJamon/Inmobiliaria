@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <p><a href="index.php?action=propietarios">Volver a Propietarios</a></p>
+    <p><a href="index.php?action=propietarios"class="btn btn-primary">Volver a Propietarios</a></p>
 
     <form action="index.php?action=propietario_update" method="post">
 
@@ -41,7 +41,7 @@ ob_start();
             <option value="I" <?= ($propietario['estado'] ?? '') === 'I' ? 'selected' : '' ?>>Inactivo</option>
         </select>
 
-        <button type="submit">Actualizar</button>
+        <button type="submit" class = "btn btn-edit">Actualizar</button>
     </form>
 </body>
 

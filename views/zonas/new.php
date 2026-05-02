@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <p><a href="index.php?action=zonas">Volver a Zonas</a></p>
+    <p><a href="index.php?action=zonas"class="btn btn-primary">Volver a Zonas</a></p>
 
     <form action="index.php?action=zona_create" method="post">
 
@@ -18,7 +18,7 @@ ob_start();
         <label for="departamento">Departamento</label>
         <input type="text" id="departamento" name="departamento">
 
-        <button type="submit">Guardar</button>
+        <button type="submit"class="btn btn-primary">Guardar</button>
     </form>
 </body>
 

@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <p><a href="index.php?action=tipos_contrato">Volver a Tipos de Contrato</a></p>
+    <p><a href="index.php?action=tipos_contrato"class="btn btn-primary">Volver a Tipos de Contrato</a></p>
 
     <form action="index.php?action=tipo_contrato_create" method="post">
 
@@ -18,7 +18,7 @@ ob_start();
         <label for="descripcion">Descripción</label>
         <input type="text" id="descripcion" name="descripcion">
 
-        <button type="submit">Guardar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
 </body>
 

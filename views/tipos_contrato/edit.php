@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <p><a href="index.php?action=tipos_contrato">Volver a Tipos de Contrato</a></p>
+    <p><a href="index.php?action=tipos_contrato" class="btn btn-primary">Volver a Tipos de Contrato</a></p>
 
     <form action="index.php?action=tipo_contrato_update" method="post">
 
@@ -26,7 +26,7 @@ ob_start();
             <option value="I" <?= ($tipo['estado'] ?? '') === 'I' ? 'selected' : '' ?>>Inactivo</option>
         </select>
 
-        <button type="submit">Actualizar</button>
+        <button type="submit" class="btn btn-edit">Actualizar</button>
     </form>
 </body>
 

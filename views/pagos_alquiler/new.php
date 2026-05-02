@@ -1,11 +1,15 @@
 <?php
-$pageTitle = 'Crear nuevos Pagos??';
+$pageTitle = 'Crear nuevos Pagos';
 
 ob_start();
 ?>
 
 <body>
-    <p><a href="index.php?action=pagos_alquiler">Volver a Pagos</a></p>
+    <p><a href="index.php?action=pagos_alquiler" class = "btn btn-primary">Volver a Pagos</a></p>
+
+    <?php if (!empty($error)) : ?>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+    <?php endif; ?>
 
     <form action="index.php?action=pago_create" method="post">
 
@@ -39,13 +43,13 @@ ob_start();
         <input type="date" id="periodo_mes" name="periodo_mes">
 
         <label for="monto_esperado">Monto Esperado</label>
-        <input type="number" step="0.01" id="monto_esperado" name="monto_esperado" value="0.00">
+        <input type="number" step="0.01" min="0" id="monto_esperado" name="monto_esperado" value="0.00">
 
         <label for="monto_pagado">Monto Pagado</label>
-        <input type="number" step="0.01" id="monto_pagado" name="monto_pagado" value="0.00">
+        <input type="number" step="0.01" min="0" id="monto_pagado" name="monto_pagado" value="0.00">
 
         <label for="mora">Mora</label>
-        <input type="number" step="0.01" id="mora" name="mora" value="0.00">
+        <input type="number" step="0.01" min="0" id="mora" name="mora" value="0.00">
 
         <label for="metodo_pago">Método de Pago</label>
         <select id="metodo_pago" name="metodo_pago">
@@ -59,7 +63,7 @@ ob_start();
         <label for="observaciones">Observaciones</label>
         <input type="text" id="observaciones" name="observaciones">
 
-        <button type="submit">Guardar</button>
+        <button type="submit"class ="btn btn-primary" <?php if (isset($pago) && $pago['total'] < 0): ?>style="background-color: red;"<?php endif; ?>>Guardar</button>
     </form>
 </body>
 

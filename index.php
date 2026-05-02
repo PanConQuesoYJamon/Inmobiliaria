@@ -32,6 +32,11 @@ require 'controllers/PagosAlquilerController.php';
 require 'controllers/BitacoraController.php';
 require 'controllers/AuthController.php';
 
+// Controllers Tablas nuevas: Facturación
+require 'controllers/ConceptosFacturacionController.php';
+require 'controllers/FacturasController.php';
+require 'controllers/PagosFacturaController.php';
+
 // Instancias
 $usuariosController      = new UsuariosController();
 $propietariosController  = new PropietariosController();
@@ -44,6 +49,11 @@ $contratosController     = new ContratosController();
 $pagosAlquilerController = new PagosAlquilerController();
 $bitacoraController      = new BitacoraController();
 $authController          = new AuthController();
+
+// Instancias Tablas nuevas: Facturación
+$conceptosFacturacionController = new ConceptosFacturacionController();
+$facturasController             = new FacturasController();
+$pagosFacturaController         = new PagosFacturaController();
 
 $router = new Router();
 
@@ -128,6 +138,31 @@ $router->add('logout',             [$authController, 'logout']);
 // Rutas: Bitácora (solo lectura)
 $router->add('bitacora',         [$bitacoraController, 'index']);
 $router->add('bitacora_filtrar', [$bitacoraController, 'filtrar']);
+
+// --- rutas nuevas: Conceptos de Facturación ---
+$router->add('conceptos_facturacion',        [$conceptosFacturacionController, 'index']);
+$router->add('concepto_facturacion_new',     [$conceptosFacturacionController, 'new']);
+$router->add('concepto_facturacion_create',  [$conceptosFacturacionController, 'create']);
+$router->add('concepto_facturacion_edit',    [$conceptosFacturacionController, 'edit']);
+$router->add('concepto_facturacion_update',  [$conceptosFacturacionController, 'update']);
+$router->add('concepto_facturacion_delete',  [$conceptosFacturacionController, 'delete']);
+
+
+// --- rutas nuevas: Facturas ---
+$router->add('facturas',        [$facturasController, 'index']);
+$router->add('factura_new',     [$facturasController, 'new']);
+$router->add('factura_create',  [$facturasController, 'create']);
+$router->add('factura_show',    [$facturasController, 'show']);
+$router->add('factura_edit',    [$facturasController, 'edit']);
+$router->add('factura_update',  [$facturasController, 'update']);
+$router->add('factura_delete',  [$facturasController, 'delete']);
+
+// --- rutas nuevas: Pagos de Factura ---
+$router->add('pagos_factura',        [$pagosFacturaController, 'index']);
+$router->add('pago_factura_new',     [$pagosFacturaController, 'new']);
+$router->add('pago_factura_create',  [$pagosFacturaController, 'create']);
+$router->add('pago_factura_anular',  [$pagosFacturaController, 'anular']);
+
 
 // Ruta por defecto al entrar al sistema
 $routeDefault = 'usuarios';

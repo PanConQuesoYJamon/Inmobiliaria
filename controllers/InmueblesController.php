@@ -138,23 +138,44 @@ class InmueblesController {
 
     public function delete(): void {
         $this->sessionHelper->verficarSession();
+
         $codigo = $_GET['codigo'] ?? null;
         if (!$codigo) {
             header('Location: index.php?action=inmuebles');
             exit;
         }
 
-        $antes     = $this->modelo->getInmueble($codigo);
-        $resultado = $this->modelo->eliminarInmueble($codigo);
+        $usuarioId = $_SESSION['usuario_id'] ?? 0;
+
+        // Obtener datos antes
+        $antes = $this->modelo->getInmueble($codigo);
+
+        if (!$antes) {
+            header('Location: index.php?action=inmuebles');
+            exit;
+        }
+
+        // ❗ En lugar de DELETE → UPDATE estado = 'I'
+        $conexion = $this->modelo->getConexion();
+        $stmt = $conexion->prepare(
+            "UPDATE inmuebles 
+            SET estado = 'I', modificado_por = ?, modificado_en = NOW()
+            WHERE codigo = ?"
+        );
+
+        $stmt->bind_param("is", $usuarioId, $codigo);
+        $resultado = $stmt->execute();
 
         if ($resultado) {
+            $despues = $this->modelo->getInmueble($codigo);
+
             $this->bitacora->registrar(
                 'inmuebles',
                 $antes['id'],
-                'DELETE',
+                'DELETE', // lo dejas así por lógica de negocio
                 json_encode($antes),
-                '',
-                $_SESSION['usuario_id'] ?? 0
+                json_encode($despues),
+                $usuarioId
             );
         }
 

@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <p><a href="index.php?action=clientes">Volver a Clientes</a></p>
+    <p><a href="index.php?action=clientes" class="btn btn-primary">Volver a Clientes</a></p>
 
     <form action="index.php?action=cliente_create" method="post">
 
@@ -33,7 +33,7 @@ ob_start();
         <label for="direccion">Dirección</label>
         <input type="text" id="direccion" name="direccion">
 
-        <button type="submit">Guardar</button>
+        <button type="submit"class="btn btn-primary">Guardar</button>
     </form>
 </body>
 

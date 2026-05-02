@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <p><a href="index.php?action=tipos_inmueble">Volver a Tipos de Inmueble</a></p>
+    <p><a href="index.php?action=tipos_inmueble" class= "btn btn-primary">Volver a Tipos de Inmueble</a></p>
 
     <form action="index.php?action=tipo_inmueble_update" method="post">
 
@@ -23,7 +23,7 @@ ob_start();
             <option value="I" <?= ($tipo['estado'] ?? '') === 'I' ? 'selected' : '' ?>>Inactivo</option>
         </select>
 
-        <button type="submit">Actualizar</button>
+        <button type="submit" class = "btn btn-edit">Actualizar</button>
     </form>
 </body>
 

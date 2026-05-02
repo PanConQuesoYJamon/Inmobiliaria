@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <p><a href="index.php?action=pagos_alquiler">Volver a Pagos</a></p>
+    <p><a href="index.php?action=pagos_alquiler" class= "btn btn-primary">Volver a Pagos</a></p>
 
     <form action="index.php?action=pago_update" method="post">
 
@@ -43,13 +43,13 @@ ob_start();
         <input type="date" id="periodo_mes" name="periodo_mes" value="<?php echo htmlspecialchars($pago['periodo_mes'] ?? ''); ?>">
 
         <label for="monto_esperado">Monto Esperado</label>
-        <input type="number" step="0.01" id="monto_esperado" name="monto_esperado" value="<?php echo htmlspecialchars($pago['monto_esperado'] ?? '0.00'); ?>">
+        <input type="number" step="0.01" min="0" id="monto_esperado" name="monto_esperado" value="<?php echo htmlspecialchars($pago['monto_esperado'] ?? '0.00'); ?>">
 
         <label for="monto_pagado">Monto Pagado</label>
-        <input type="number" step="0.01" id="monto_pagado" name="monto_pagado" value="<?php echo htmlspecialchars($pago['monto_pagado'] ?? '0.00'); ?>">
+        <input type="number" step="0.01" min="0" id="monto_pagado" name="monto_pagado" value="<?php echo htmlspecialchars($pago['monto_pagado'] ?? '0.00'); ?>">
 
         <label for="mora">Mora</label>
-        <input type="number" step="0.01" id="mora" name="mora" value="<?php echo htmlspecialchars($pago['mora'] ?? '0.00'); ?>">
+        <input type="number" step="0.01" min="0" id="mora" name="mora" value="<?php echo htmlspecialchars($pago['mora'] ?? '0.00'); ?>">
 
         <label for="metodo_pago">Método de Pago</label>
         <select id="metodo_pago" name="metodo_pago">
@@ -70,7 +70,7 @@ ob_start();
             <option value="I" <?= ($pago['estado'] ?? '') === 'I' ? 'selected' : '' ?>>Anulado</option>
         </select>
 
-        <button type="submit">Actualizar</button>
+        <button type="submit" class = "btn btn-edit">Actualizar</button>
     </form>
 </body>
 

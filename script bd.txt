@@ -191,5 +191,96 @@ CREATE TABLE bitacora (
   CONSTRAINT fk_bit_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
 );
 
+CREATE TABLE conceptos_facturacion (
+  id               INT           AUTO_INCREMENT PRIMARY KEY,
+  nombre           VARCHAR(150)  NOT NULL,
+  descripcion      VARCHAR(255)  DEFAULT NULL,
+  precio_base      DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  aplica_impuesto  VARCHAR(1)    NOT NULL DEFAULT 'N',
+  estado           VARCHAR(1)    NOT NULL DEFAULT 'A',
+  creado_por       INT           DEFAULT NULL,
+  creado_en        DATETIME      DEFAULT NOW(),
+  modificado_por   INT           DEFAULT NULL,
+  modificado_en    DATETIME      DEFAULT NULL,
+  CONSTRAINT fk_cf_creado_por     FOREIGN KEY (creado_por)     REFERENCES usuarios (id),
+  CONSTRAINT fk_cf_modificado_por FOREIGN KEY (modificado_por) REFERENCES usuarios (id)
+);
+
+-- ------------------------------------------------------------
+-- TABLA: facturas
+-- Factura principal generada a partir de un contrato
+-- ------------------------------------------------------------
+CREATE TABLE facturas (
+  id               INT           AUTO_INCREMENT PRIMARY KEY,
+  numero_factura   VARCHAR(50)   NOT NULL UNIQUE,
+  contrato_id      INT           NOT NULL,
+  cliente_id       INT           NOT NULL,
+  usuario_id       INT           NOT NULL,
+  fecha_emision    DATE          NOT NULL,
+  fecha_vencimiento DATE         DEFAULT NULL,
+  subtotal         DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  impuesto         DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  total            DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  observaciones    VARCHAR(500)  DEFAULT NULL,
+  estado           VARCHAR(10)   NOT NULL DEFAULT 'borrador'
+                   COMMENT 'borrador, emitida, pagada, anulada',
+  creado_por       INT           DEFAULT NULL,
+  creado_en        DATETIME      DEFAULT NOW(),
+  modificado_por   INT           DEFAULT NULL,
+  modificado_en    DATETIME      DEFAULT NULL,
+  CONSTRAINT fk_fac_contrato      FOREIGN KEY (contrato_id)    REFERENCES contratos (id),
+  CONSTRAINT fk_fac_cliente       FOREIGN KEY (cliente_id)     REFERENCES clientes  (id),
+  CONSTRAINT fk_fac_usuario       FOREIGN KEY (usuario_id)     REFERENCES usuarios  (id),
+  CONSTRAINT fk_fac_creado_por    FOREIGN KEY (creado_por)     REFERENCES usuarios  (id),
+  CONSTRAINT fk_fac_modificado_por FOREIGN KEY (modificado_por) REFERENCES usuarios (id)
+);
+
+-- ------------------------------------------------------------
+-- TABLA: detalle_factura
+-- Renglones de cada factura
+-- ------------------------------------------------------------
+CREATE TABLE detalle_factura (
+  id               INT           AUTO_INCREMENT PRIMARY KEY,
+  factura_id       INT           NOT NULL,
+  concepto_id      INT           DEFAULT NULL,
+  concepto         VARCHAR(255)  NOT NULL,
+  cantidad         DECIMAL(10,2) NOT NULL DEFAULT 1,
+  precio_unitario  DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  subtotal         DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  CONSTRAINT fk_det_factura  FOREIGN KEY (factura_id)  REFERENCES facturas              (id),
+  CONSTRAINT fk_det_concepto FOREIGN KEY (concepto_id) REFERENCES conceptos_facturacion (id)
+);
+
+-- ------------------------------------------------------------
+-- TABLA: pagos_factura
+-- Pagos aplicados a una factura
+-- ------------------------------------------------------------
+CREATE TABLE pagos_factura (
+  id             INT           AUTO_INCREMENT PRIMARY KEY,
+  numero_recibo  VARCHAR(50)   NOT NULL UNIQUE,
+  factura_id     INT           NOT NULL,
+  usuario_id     INT           NOT NULL,
+  fecha_pago     DATE          NOT NULL,
+  monto_pagado   DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  metodo_pago    VARCHAR(50)   DEFAULT NULL
+                 COMMENT 'Efectivo, transferencia, cheque, deposito',
+  referencia     VARCHAR(100)  DEFAULT NULL,
+  observaciones  VARCHAR(500)  DEFAULT NULL,
+  estado         VARCHAR(1)    NOT NULL DEFAULT 'A'
+                 COMMENT 'A=Aplicado, I=Anulado',
+  creado_por     INT           DEFAULT NULL,
+  creado_en      DATETIME      DEFAULT NOW(),
+  modificado_por INT           DEFAULT NULL,
+  modificado_en  DATETIME      DEFAULT NULL,
+  CONSTRAINT fk_pf_factura       FOREIGN KEY (factura_id)    REFERENCES facturas (id),
+  CONSTRAINT fk_pf_usuario       FOREIGN KEY (usuario_id)    REFERENCES usuarios (id),
+  CONSTRAINT fk_pf_creado_por    FOREIGN KEY (creado_por)    REFERENCES usuarios (id),
+  CONSTRAINT fk_pf_modificado_por FOREIGN KEY (modificado_por) REFERENCES usuarios (id)
+);
+
+ALTER TABLE pagos_alquiler 
+ADD COLUMN factura_id INT DEFAULT NULL,
+ADD CONSTRAINT fk_pag_factura 
+    FOREIGN KEY (factura_id) REFERENCES facturas(id);
 
 -- FIN DEL SCRIPT

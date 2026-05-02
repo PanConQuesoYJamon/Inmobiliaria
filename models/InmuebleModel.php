@@ -19,14 +19,15 @@ class InmuebleModel {
                        p.nombres AS propietario_nombres, p.apellidos AS propietario_apellidos,
                        t.nombre  AS tipo_nombre,
                        z.nombre  AS zona_nombre,
-                       u1.nombre AS creado_por_nombre,
-                       u2.nombre AS modificado_por_nombre
+                     u1.nombre AS creado_por_nombre,
+                    u2.nombre AS modificado_por_nombre
                 FROM inmuebles i
                 LEFT JOIN propietarios  p  ON p.id  = i.propietario_id
                 LEFT JOIN tipos_inmueble t ON t.id  = i.tipo_inmueble_id
                 LEFT JOIN zonas          z  ON z.id  = i.zona_id
                 LEFT JOIN usuarios       u1 ON u1.id = i.creado_por
                 LEFT JOIN usuarios       u2 ON u2.id = i.modificado_por
+                WHERE i.estado = 'A'  -- 👈 ESTA ES LA CLAVE
                 ORDER BY i.codigo ASC";
 
         $resultado = $this->conexion->query($sql);
@@ -127,6 +128,19 @@ class InmuebleModel {
             $codigoOriginal
         );
         return $stmt->execute();
+    }
+
+
+    public function tieneContratos(int $inmuebleId): bool {
+        $stmt = $this->conexion->prepare(
+            "SELECT COUNT(*) as total FROM contratos WHERE inmueble_id = ?"
+        );
+
+        $stmt->bind_param("i", $inmuebleId);
+        $stmt->execute();
+        $res = $stmt->get_result()->fetch_assoc();
+
+        return $res['total'] > 0;
     }
 
     /**

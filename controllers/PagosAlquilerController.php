@@ -24,6 +24,10 @@ class PagosAlquilerController {
         $this->sessionHelper   = new SessionHelper();
     }
 
+    /* -------------------------------------------------------
+     * MÉTODOS DE PREPARACIÓN DE VISTA
+     * ----------------------------------------------------- */
+
     public function index(): void {
         $this->sessionHelper->verficarSession();
         $pagos = $this->modelo->getPagos();
@@ -51,6 +55,10 @@ class PagosAlquilerController {
         include __DIR__ . '/../views/pagos_alquiler/edit.php';
     }
 
+    /* -------------------------------------------------------
+     * MÉTODOS DE ACCIÓN
+     * ----------------------------------------------------- */
+
     public function create(): void {
         $this->sessionHelper->verficarSession();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -59,28 +67,39 @@ class PagosAlquilerController {
         }
 
         $datos = [
-            'numero_recibo'  => trim($_POST['numero_recibo']      ?? ''),
-            'contrato_id'    => (int)($_POST['contrato_id']       ?? 0),
-            'usuario_id'     => (int)($_POST['usuario_id']        ?? 0),
-            'fecha_pago'     => trim($_POST['fecha_pago']         ?? ''),
+            'numero_recibo'  => trim($_POST['numero_recibo']     ?? ''),
+            'contrato_id'    => (int)($_POST['contrato_id']      ?? 0),
+            'usuario_id'     => (int)($_POST['usuario_id']       ?? 0),
+            'fecha_pago'     => trim($_POST['fecha_pago']        ?? ''),
             'periodo_mes'    => trim($_POST['periodo_mes']        ?? ''),
-            'monto_esperado' => (float)($_POST['monto_esperado']  ?? 0),
-            'monto_pagado'   => (float)($_POST['monto_pagado']    ?? 0),
-            'mora'           => (float)($_POST['mora']            ?? 0),
-            'metodo_pago'    => trim($_POST['metodo_pago']        ?? ''),
-            'observaciones'  => trim($_POST['observaciones']      ?? '')
+            'monto_esperado' => (float)($_POST['monto_esperado'] ?? 0),
+            'monto_pagado'   => (float)($_POST['monto_pagado']   ?? 0),
+            'mora'           => (float)($_POST['mora']           ?? 0),
+            'metodo_pago'    => trim($_POST['metodo_pago']       ?? ''),
+            'observaciones'  => trim($_POST['observaciones']     ?? '')
         ];
 
         $usuarioId = $_SESSION['usuario_id'] ?? null;
+
+        if ($datos['monto_esperado'] < 0 || $datos['monto_pagado'] < 0 || $datos['mora'] < 0) {
+            $error = 'Los montos no pueden ser negativos.';
+            $contratos = $this->modeloContratos->getContratos();
+            $usuarios  = $this->modeloUsuarios->getUsuarios();
+            include __DIR__ . '/../views/pagos_alquiler/new.php';
+            return;
+        }
+
+        // crearPago genera la factura automáticamente
         $resultado = $this->modelo->crearPago($datos, $usuarioId);
 
         if ($resultado) {
+            $pago = $this->modelo->getPago($datos['numero_recibo']);
             $this->bitacora->registrar(
                 'pagos_alquiler',
-                $this->modelo->getConexion()->insert_id,
+                $pago['id'] ?? 0,
                 'INSERT',
                 '',
-                json_encode($datos),
+                json_encode($datos, JSON_UNESCAPED_UNICODE),
                 $usuarioId ?? 0
             );
         }
@@ -101,18 +120,28 @@ class PagosAlquilerController {
         $antes          = $this->modelo->getPago($reciboOriginal);
 
         $datos = [
-            'numero_recibo'  => trim($_POST['numero_recibo']      ?? ''),
-            'contrato_id'    => (int)($_POST['contrato_id']       ?? 0),
-            'usuario_id'     => (int)($_POST['usuario_id']        ?? 0),
-            'fecha_pago'     => trim($_POST['fecha_pago']         ?? ''),
+            'numero_recibo'  => trim($_POST['numero_recibo']     ?? ''),
+            'contrato_id'    => (int)($_POST['contrato_id']      ?? 0),
+            'usuario_id'     => (int)($_POST['usuario_id']       ?? 0),
+            'fecha_pago'     => trim($_POST['fecha_pago']        ?? ''),
             'periodo_mes'    => trim($_POST['periodo_mes']        ?? ''),
-            'monto_esperado' => (float)($_POST['monto_esperado']  ?? 0),
-            'monto_pagado'   => (float)($_POST['monto_pagado']    ?? 0),
-            'mora'           => (float)($_POST['mora']            ?? 0),
-            'metodo_pago'    => trim($_POST['metodo_pago']        ?? ''),
-            'observaciones'  => trim($_POST['observaciones']      ?? ''),
-            'estado'         => trim($_POST['estado']             ?? 'A')
+            'monto_esperado' => (float)($_POST['monto_esperado'] ?? 0),
+            'monto_pagado'   => (float)($_POST['monto_pagado']   ?? 0),
+            'mora'           => (float)($_POST['mora']           ?? 0),
+            'metodo_pago'    => trim($_POST['metodo_pago']       ?? ''),
+            'observaciones'  => trim($_POST['observaciones']     ?? ''),
+            'estado'         => trim($_POST['estado']            ?? 'A')
         ];
+
+        if ($datos['monto_esperado'] < 0 || $datos['monto_pagado'] < 0 || $datos['mora'] < 0) {
+            $error = 'Los montos no pueden ser negativos.';
+            $contratos = $this->modeloContratos->getContratos();
+            $usuarios  = $this->modeloUsuarios->getUsuarios();
+            $pago = array_merge($antes ?: [], $datos);
+            $pago['estado'] = $datos['estado'];
+            include __DIR__ . '/../views/pagos_alquiler/edit.php';
+            return;
+        }
 
         $resultado = $this->modelo->actualizarPago($datos, $reciboOriginal, $usuarioId);
 
@@ -121,8 +150,8 @@ class PagosAlquilerController {
                 'pagos_alquiler',
                 $antes['id'],
                 'UPDATE',
-                json_encode($antes),
-                json_encode($datos),
+                json_encode($antes, JSON_UNESCAPED_UNICODE),
+                json_encode($datos, JSON_UNESCAPED_UNICODE),
                 $usuarioId ?? 0
             );
         }
@@ -147,7 +176,7 @@ class PagosAlquilerController {
                 'pagos_alquiler',
                 $antes['id'],
                 'DELETE',
-                json_encode($antes),
+                json_encode($antes, JSON_UNESCAPED_UNICODE),
                 '',
                 $_SESSION['usuario_id'] ?? 0
             );

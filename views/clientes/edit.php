@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <body>
-    <p><a href="index.php?action=clientes">Volver a Clientes</a></p>
+    <p><a href="index.php?action=clientes" class="btn btn-primary">Volver a Clientes</a></p>
 
     <form action="index.php?action=cliente_update" method="post">
 
@@ -41,7 +41,7 @@ ob_start();
             <option value="I" <?= ($cliente['estado'] ?? '') === 'I' ? 'selected' : '' ?>>Inactivo</option>
         </select>
 
-        <button type="submit">Actualizar</button>
+        <button type="submit"class="btn btn-primary">Actualizar</button>
     </form>
 </body>
 
